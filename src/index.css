@@ -7,8 +7,6 @@
   font-family: poppins;
 }
 
-.my-value {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  place-content: center;
+::-webkit-scrollbar {
+  display: none;
 }
