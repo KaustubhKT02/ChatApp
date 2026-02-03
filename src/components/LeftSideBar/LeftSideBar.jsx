@@ -1,15 +1,21 @@
-import React from 'react'
+import {react, useState} from 'react'
 import assets from '../../../assets/assets.js'
 
 
 function LeftSideBar() {
+    const [open, setOpen]= useState(false);
   return (
     <div className='bg-[#001030] text-white h-[75vh]'>
         <div className='p-5' >
             <div className='flex justify-between items-center'>
                 <img src={assets.logo} className='max-w-36' alt="Logo" />
-                <div>
-                    <img src={assets.menu_icon} className='max-h-5 cursor-pointer opacity-[0.6]' alt="Menu Icon" />
+                <div className='relative py-2.5 px-0 '>
+                    <img src={assets.menu_icon} className='max-h-5 cursor-pointer opacity-[0.6]' onClick={()=> setOpen(!open)} alt="Menu Icon" />
+                   { open && ( <div className='absolute top-full right-0 w-32.5 p-5 rounded-[5px]  bg-white text-black '>
+                        <p className='cursor-pointer text-[14px] hover:text-blue-600'>Edit Profile</p>
+                        <hr className='border-0 h-px bg-[#a4a4a4] my-2 mx-0  ' />
+                        <p className='cursor-pointer text-[14px] hover:text-red-600'>Logout</p>
+                    </div>)}
                 </div>
             </div>
             <div className='bg-[#002670] flex items-center gap-2 py-2.5 px-3 mt-5'>
