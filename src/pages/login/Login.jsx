@@ -9,7 +9,7 @@ function Login() {
       className={`min-h-dvh bg-[url(/background.png)] bg-no-repeat bg-cover flex justify-evenly items-center`}
     >
       <img src={assets.logo_big} alt="" className="w-[max(20vw,200px)]" />
-      <form className="bg-white p-8 rounded-lg flex flex-col gap-4 min-w-[300px] min-h-[400px] shadow-lg">
+      <form className="bg-white p-8 rounded-lg flex flex-col gap-4 min-w-75 min-h-100 shadow-lg">
         <h2 className="text-2xl font-medium">{currentState}</h2>
         {currentState === "Sign Up" ? (
           <input
