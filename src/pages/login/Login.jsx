@@ -1,6 +1,6 @@
 import React, { use, useState } from "react";
 import assets from "../../../assets/assets.js";
-import Signup from "../../config/firebase.config.js";
+import {signup, login, logout} from "../../config/firebase.config.js";
 
 function Login() {
   const [currentState, setCurrentState] = useState("Sign Up");
@@ -11,8 +11,11 @@ function Login() {
   const onsubmitHandler = (e) => {
     e.preventDefault();
     if (currentState === "Sign Up") {
-      Signup(username, email, password);
-    } 
+      signup(username, email, password);
+    } else
+    {
+      login(email, password)
+    }
   };
 
   return (

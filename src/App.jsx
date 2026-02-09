@@ -1,12 +1,28 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Login, Chat, Profile } from "./pages/index.js";
-import  {Routes, Route} from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./config/firebase.config.js";
+import { AppContext } from "./context/AppContext.jsx";
 
 function App() {
+  const navigate = useNavigate();
+  const { loaduserData } = useContext(AppContext);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        navigate("/chat");
+        await loaduserData(user.uid);
+      } else {
+        navigate("/");
+      }
+    });
+  }, []);
   return (
     <>
-    <ToastContainer/>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/chat" element={<Chat />} />
