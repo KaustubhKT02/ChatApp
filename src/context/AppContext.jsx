@@ -1,37 +1,45 @@
 import { createContext, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../config/firebase.config";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { auth, db } from "../config/firebase.config";
 import { useNavigate } from "react-router-dom";
 
 export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [chatData, setChatData] = useState(null);
 
   const loaduserData = async (uid) => {
     try {
-        const userRef = doc(db, 'users', uid)
-        const userSnap = await getDoc(userRef)
-        const  userData = userSnap.data()
-        setUserData(userData)
+      const userRef = doc(db, "users", uid);
+      const userSnap = await getDoc(userRef);
+      const userData = userSnap.data();
+      setUserData(userData);
 
-        if(userData.avatar && userData.name) {
-            navigate('/chat')
-        } else {
-            navigate('/profile')
-        }
-    } catch (error) {
-        
-    }
-  }
+      if (userData.avatar && userData.name) {
+        navigate("/chat");
+      } else {
+        navigate("/profile");
+      }
+      await updateDoc(userRef, {
+        lastSeen: Date.now(),
+      });
+      setInterval(async () => {
+        if (auth.chatUser) {
+          await updateDoc(userRef, {
+            lastSeen: Date.now(),
+          });
+        } 
+      }, 60000);
+    } catch (error) {}
+  };
   const value = {
     userData,
     setUserData,
     chatData,
     setChatData,
-    loaduserData
+    loaduserData,
   };
 
   return (
