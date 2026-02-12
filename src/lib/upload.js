@@ -1,37 +1,26 @@
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { Client, Storage, ID } from "appwrite";
 
-const upload = async(file) => {
-    const storage = getStorage();
-const storageRef = ref(storage, `images/${Date.now()+file.name()}`);
+const client = new Client()
+  .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT) // include /v1
+  .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID);
 
-const uploadTask = uploadBytesResumable(storageRef, file);
+const storage = new Storage(client);
 
+export async function uploadImage(file) {
+  const res = await storage.createFile(
+    import.meta.env.VITE_APPWRITEBUCKETID,
+    ID.unique(),
+    file
+  );
 
-uploadTask.on('state_changed', 
-  (snapshot) => {
-   
-    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    console.log('Upload is ' + progress + '% done');
-    switch (snapshot.state) {
-      case 'paused':
-        console.log('Upload is paused');
-        break;
-      case 'running':
-        console.log('Upload is running');
-        break;
-    }
-  }, 
-  (error) => {
-   
-  }, 
-  () => {
-    
-    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-     return(downloadURL)
-    });
-  }
-);
+  // return ONLY fileId
+  return res.$id;
 }
 
+export function getImageUrl(fileId) {
+  return storage.getFilePreview(
+    import.meta.env.VITE_APPWRITEBUCKETID,
+    fileId
+  );
+}
 
-export default upload

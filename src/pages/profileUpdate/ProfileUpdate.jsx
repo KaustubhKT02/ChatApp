@@ -5,7 +5,7 @@ import { auth, db } from "../../config/firebase.config.js";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import upload from "../../lib/upload.js";
+import {uploadImage} from "../../lib/upload.js";
 
 function ProfileUpdate() {
   const [image, setImage] = useState(false);
@@ -17,26 +17,17 @@ function ProfileUpdate() {
 
   const profileUpdate = async (e) => {
     e.preventDefault();
-    try {
-      if (!prevImage && !image) {
-        toast.error("Upload profile Picture!!!");
-      }
-      const docRef = doc(db, "users", uid);
-      if (image) {
-        const imgUrl = await upload(image);
-        setPrevImage(imgUrl);
-        await updateDoc(docRef, {
-          avatar: imgUrl,
-          bio: bio,
-          name: name,
-        });
-      } else {
-        await updateDoc(docRef, {
-          bio: bio,
-          name: name,
-        });
-      }
-    } catch (errr) {}
+    let imgUrl = prevImage;
+    if (image) {
+      imgUrl = await uploadImage(image);
+    }
+    await updateDoc(doc(db, "users", uid), {
+      name,
+      bio,
+      avatar: imgUrl,
+    });
+    toast.success("Profile updated successfully");
+    navigate("/chat");
   };
 
   useEffect(() => {
