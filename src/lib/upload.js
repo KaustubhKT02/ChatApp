@@ -13,14 +13,9 @@ export async function uploadImage(file) {
     file
   );
 
-  // return ONLY fileId
-  return res.$id;
+  const imageUrl = `${import.meta.env.VITE_APPWRITE_ENDPOINT}/storage/buckets/${import.meta.env.VITE_APPWRITEBUCKETID}/files/${res.$id}/view?project=${import.meta.env.VITE_APPWRITE_PROJECT_ID}`;
+  return imageUrl;
 }
 
-export function getImageUrl(fileId) {
-  return storage.getFilePreview(
-    import.meta.env.VITE_APPWRITEBUCKETID,
-    fileId
-  );
-}
+
 

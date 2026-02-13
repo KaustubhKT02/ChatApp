@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import assets from "../../../assets/assets.js";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../../config/firebase.config.js";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import {uploadImage} from "../../lib/upload.js";
+import { uploadImage } from "../../lib/upload.js";
+import { AppContext } from "../../context/AppContext.jsx";
 
 function ProfileUpdate() {
   const [image, setImage] = useState(false);
@@ -13,21 +14,33 @@ function ProfileUpdate() {
   const [bio, setBio] = useState(" ");
   const [uid, setUid] = useState("");
   const [prevImage, setPrevImage] = useState("");
+  const { setUserData } = useContext(AppContext);
   const navigate = useNavigate();
 
   const profileUpdate = async (e) => {
     e.preventDefault();
-    let imgUrl = prevImage;
-    if (image) {
-      imgUrl = await uploadImage(image);
-    }
-    await updateDoc(doc(db, "users", uid), {
-      name,
-      bio,
-      avatar: imgUrl,
-    });
-    toast.success("Profile updated successfully");
-    navigate("/chat");
+  try {
+      let img = prevImage;
+      if (!image && !prevImage) {
+        toast.error("Please upload a profile image");
+      } else {
+        if (image) {
+          img = await uploadImage(image);
+        }
+        await updateDoc(doc(db, "users", uid), {
+          name,
+          bio,
+          avatar: img || null,
+        });
+        toast.success("Profile updated successfully");
+        const snap = await getDoc(doc(db, "users", uid));
+        setUserData(snap.data());
+        navigate("/chat");
+      }
+  } catch (error) {
+    console.log(error);
+      toast.error("Error updating profile");
+  }
   };
 
   useEffect(() => {
