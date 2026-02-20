@@ -110,7 +110,7 @@ function ProfileUpdate() {
           </button>
         </form>
         <img
-          src={image ? URL.createObjectURL(image) : assets.logo_icon}
+          src={image ? URL.createObjectURL(image) : prevImage ? prevImage : assets.logo_icon}
           className="max-w-40 aspect-square my-5 mx-auto rounded-[15px]"
           alt="logo icon"
         />

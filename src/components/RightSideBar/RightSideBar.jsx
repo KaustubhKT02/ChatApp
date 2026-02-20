@@ -58,7 +58,7 @@ function RightSideBar() {
             />
           </div>
         </div>
-        <button onClick={()=> logout()} className=" absolute bottom-5 left-[50%] transform translate-x-[-50%] bg-[#077eff] text-white border-0 text-[12px] font-light py-2.5 px-4 rounded-[20px] cursor-pointer hover:text-red-600 ">
+        <button onClick={()=> {logout()}} className=" absolute bottom-5 left-[50%] transform translate-x-[-50%] bg-[#077eff] text-white border-0 text-[12px] font-light py-2.5 px-4 rounded-[20px] cursor-pointer hover:text-red-600 ">
           Logout
         </button>
       </div>
