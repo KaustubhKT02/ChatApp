@@ -1,7 +1,7 @@
-import { react, useContext, useState } from "react";
+import { react, use, useContext, useState } from "react";
 import assets from "../../../assets/assets.js";
 import { useNavigate } from "react-router-dom";
-import { collection, getDoc, getDocs, query, where,} from "firebase/firestore";
+import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../config/firebase.config.js";
 import { AppContext } from "../../context/AppContext.jsx";
 
@@ -9,17 +9,33 @@ function LeftSideBar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { userData } = useContext(AppContext);
+  const [user, setUser] = useState(null);
+  const [showSearch, setShowserch] = useState(false);
+
   const inputHanlder = async (e) => {
     try {
-        const input = e.target.value;
+      const input = e.target.value.trim().toLowerCase();
+
+      if (input) {
+        setShowserch(true);
+
         const userRef = collection(db, "users");
-        const q = query(userRef, where("username", "==", input.toLowerCase()));
+        const q = query(userRef, where("username", "==", input));
+
         const querySnap = await getDocs(q);
-        if (!querySnap.empty && querySnap.docs[0].id !== userData.id) {
-          console.log("User found:", querySnap.docs[0].data());
+        if (!querySnap.empty) {
+          const userData = querySnap.docs[0].data();
+          console.log(userData);
+          setUser(userData); // Don't forget to set user
+        } else {
+          setUser(null);
         }
+      } else {
+        setShowserch(false);
+        setUser(null);
+      }
     } catch (error) {
-        console.error("Error searching for user:", error);
+      console.log("Error searching for user:", error);
     }
   };
   return (
@@ -61,7 +77,21 @@ function LeftSideBar() {
         </div>
       </div>
       <div className="flex flex-col h-[70%] overflow-y-scroll">
-        {Array(12)
+        {showSearch && user ? (
+          <div className="flex  items-center gap-2 py-2.5 px-3 text-[13px] hover:bg-[#077EFF]">
+            <img
+              src={user.avatar}
+              className="w-8.75 aspect-square rounded-[50%] "
+              alt=""
+            />
+            <div className="flex flex-col ">
+              <p>{user.name}</p>
+              <span className="text-[#9f9f9f] text-[11px] hover:text-white">
+                Hello, How are you?
+              </span>
+            </div>
+
+            {/* {Array(12)
           .fill("")
           .map((items, index) => (
             <div
@@ -69,18 +99,20 @@ function LeftSideBar() {
               className="flex  items-center gap-2 py-2.5 px-3 text-[13px] hover:bg-[#077EFF]"
             >
               <img
-                src={assets.profile_img}
+                src={user.avatar}
                 className="w-8.75 aspect-square rounded-[50%] "
                 alt=""
               />
               <div className="flex flex-col ">
-                <p>Richard Sanford</p>
+                <p>{user.name}</p>
                 <span className="text-[#9f9f9f] text-[11px] hover:text-white">
                   Hello, How are you?
                 </span>
               </div>
             </div>
-          ))}
+          ))} */}
+          </div>
+        ) : null}
       </div>
     </div>
   );
